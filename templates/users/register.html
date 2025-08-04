@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card col-md-6 mx-auto">
+  <div class="card-body">
+    <h2 class="card-title text-center">Register</h2>
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {% if form.errors %}
+<div class="alert alert-danger">
+    <ul>
+        {% for field, errors in form.errors.items %}
+            {% for error in errors %}
+                <li><strong>{{ field|title }}:</strong> {{ error }}</li>
+            {% endfor %}
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+      {{ form.as_p }}
+      <button type="submit" class="btn btn-primary w-100">Register</button>
+    </form>
+    <hr>
+    <p class="text-center">
+      Already have an account?
+      <a href="{% url 'login' %}">Login here</a>
+    </p>
+  </div>
+</div>
+{% endblock %}

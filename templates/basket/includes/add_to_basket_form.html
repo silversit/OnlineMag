@@ -1,0 +1,8 @@
+<form method="post" action="{% url 'add-to-basket' product.id %}">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label for="id_quantity">Quantity:</label>
+        <input type="number" name="quantity" id="id_quantity" value="1" min="1" class="form-control">
+    </div>
+    <button type="submit" class="btn btn-primary">Add to Basket</button>
+</form>

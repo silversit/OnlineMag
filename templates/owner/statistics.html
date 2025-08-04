@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="mb-4">Store Statistics</h2>
+
+<div class="text-white">
+    <p><strong>Total Order Income:</strong> {{ total_income|floatformat:2 }} USD</p>
+    <p><strong>Total Transport Fee Collected:</strong> {{ transport_income|floatformat:2 }} USD</p>
+
+    <h4 class="mt-4">Orders by Status</h4>
+    <ul>
+        {% for item in order_counts %}
+            <li>{{ item.status|title }}: {{ item.count }}</li>
+        {% endfor %}
+    </ul>
+
+    <h4 class="mt-4">Orders in the Last 7 Days</h4>
+    <ul>
+        {% for entry in daily_orders %}
+            <li>{{ entry.day }} — {{ entry.count }} orders, {{ entry.total|floatformat:2 }} USD</li>
+        {% empty %}
+            <li>No orders in the last 7 days.</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container text-white">
+    <h2 class="my-4">Message Center</h2>
+
+    <ul class="nav nav-tabs" id="msgTab" role="tablist">
+        <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#new">New</a></li>
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#answered">Answered</a></li>
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#updated">Updated</a></li>
+    </ul>
+
+    <div class="tab-content mt-3">
+        <!-- NEW TAB -->
+        <div class="tab-pane fade show active" id="new">
+            {% for msg in new %}
+            <div class="card mb-3 bg-dark text-white p-3">
+                <strong>From:</strong> {{ msg.sender }}<br>
+                <strong>Subject:</strong> {{ msg.subject }}<br>
+                <p>{{ msg.content }}</p>
+
+                <!-- REPLIES -->
+                {% for reply in msg.replies.all %}
+                <div class="mt-2 ms-3 border-start border-success ps-3">
+                    <strong>{{ reply.sender.username }}:</strong> {{ reply.content }}
+                    <div class="text-muted small">{{ reply.sent_at|date:'Y-m-d H:i' }}</div>
+                </div>
+                {% endfor %}
+
+                <!-- REPLY FORM (ONLY IF NO REPLIES YET) -->
+                {% if not msg.replies.exists %}
+                <form method="post" action="{% url 'owner-reply-message' msg.id %}">
+                    {% csrf_token %}
+                    <div class="mb-2 mt-2">
+                        <textarea name="reply" class="form-control" rows="2" placeholder="Write your reply..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-sm btn-primary">Send Reply</button>
+                </form>
+                {% endif %}
+            </div>
+            {% empty %}
+            <p>No new messages.</p>
+            {% endfor %}
+        </div>
+
+        <!-- ANSWERED TAB -->
+        <div class="tab-pane fade" id="answered">
+            {% for msg in answered %}
+            <div class="card mb-3 bg-dark text-white p-3">
+                <strong>From:</strong> {{ msg.sender }}<br>
+                <strong>Subject:</strong> {{ msg.subject }}<br>
+                <p>{{ msg.content }}</p>
+
+                {% for reply in msg.replies.all %}
+                <div class="mt-2 ms-3 border-start border-success ps-3">
+                    <strong>{{ reply.sender.username }}:</strong> {{ reply.content }}
+                    <div class="text-muted small">{{ reply.sent_at|date:'Y-m-d H:i' }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            {% empty %}
+            <p>No answered messages.</p>
+            {% endfor %}
+        </div>
+
+        <!-- UPDATED TAB (includes reply form) -->
+        <div class="tab-pane fade" id="updated">
+            {% for msg in updated %}
+            <div class="card mb-3 bg-dark text-white p-3">
+                <strong>From:</strong> {{ msg.sender }}<br>
+                <strong>Subject:</strong> {{ msg.subject }}<br>
+                <p>{{ msg.content }}</p>
+
+                {% for reply in msg.replies.all %}
+                <div class="mt-2 ms-3 border-start border-success ps-3">
+                    <strong>{{ reply.sender.username }}:</strong> {{ reply.content }}
+                    <div class="text-muted small">{{ reply.sent_at|date:'Y-m-d H:i' }}</div>
+                </div>
+                {% endfor %}
+
+                <!-- Reply form (always show in updated tab) -->
+                <form method="post" action="{% url 'owner-reply-message' msg.id %}">
+                    {% csrf_token %}
+                    <div class="mb-2 mt-2">
+                        <textarea name="reply" class="form-control" rows="2" placeholder="Write your reply..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-sm btn-warning">Reply to Update</button>
+                </form>
+            </div>
+            {% empty %}
+            <p>No updated messages.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

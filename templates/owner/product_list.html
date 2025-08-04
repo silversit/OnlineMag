@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container text-white">
+    <h2 class="my-4">Manage Products</h2>
+    <a href="{% url 'owner-product-add' %}" class="btn btn-success mb-3">Add Product</a>
+
+    <table class="table table-dark table-bordered text-center">
+
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Promoted</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr>
+                <td>{{ product.name }}</td>
+                <td>{{ product.price }}</td>
+          <td {% if product.quantity < 10 %} class="text-warning fw-bold" {% endif %} >
+    {{ product.quantity }}
+</td>
+
+                <td>{{ product.is_promoted }}</td>
+                <td class="d-flex flex-column gap-1">
+    <a href="{% url 'owner-product-edit' product.pk %}" class="btn btn-sm btn-outline-light w-100 text-nowrap">Edit</a>
+    <a href="{% url 'owner-product-delete' product.pk %}" class="btn btn-sm btn-outline-danger w-100 text-nowrap">Delete</a>
+    <form method="post" action="{% url 'owner-toggle-promotion' product.pk %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-sm btn-outline-warning w-100 text-nowrap">
+            {% if product.is_promoted %}Unmark{% else %}Promote{% endif %}
+        </button>
+    </form>
+</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

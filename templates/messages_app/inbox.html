@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Your Inbox</h2>
+
+<!-- Inbox Messages (from owner/admin) -->
+{% if inbox_messages %}
+    <h4 class="mt-4">Messages from Admin</h4>
+    {% for msg in inbox_messages %}
+        <div class="card my-3">
+            <div class="card-header">
+                <strong>From:</strong> {{ msg.sender.username }}<br>
+                <strong>Subject:</strong> {{ msg.subject }}<br>
+                <small class="text-muted">{{ msg.sent_at|date:'Y-m-d H:i' }}</small>
+            </div>
+            <div class="card-body">
+                <p>{{ msg.content }}</p>
+
+                {% if msg.replies.exists %}
+                    <hr>
+                    <h6>Conversation:</h6>
+                    {% for reply in msg.replies.all %}
+                        <div class="border-start ps-3 mb-2">
+                            <strong>{{ reply.sender.username }}:</strong>
+                            {{ reply.content }}<br>
+                            <small class="text-muted">{{ reply.sent_at|date:"Y-m-d H:i" }}</small>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                {% if msg.recipient == request.user and msg.answered %}
+                    <hr>
+                    <form method="post" action="{% url 'reply-to-message' msg.id %}">
+                        {% csrf_token %}
+                        <textarea name="reply" class="form-control mb-2" rows="2" placeholder="Your reply..." required></textarea>
+                        <button type="submit" class="btn btn-sm btn-primary">Reply</button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<!-- Sent Threads -->
+{% if sent_messages %}
+    <h4 class="mt-5">Sent Threads (Waiting for Admin Reply)</h4>
+    {% for msg in sent_messages %}
+        <div class="card my-3">
+            <div class="card-header">
+                <strong>To Admin</strong><br>
+                <strong>Subject:</strong> {{ msg.subject }}<br>
+                <small class="text-muted">{{ msg.sent_at|date:'Y-m-d H:i' }}</small>
+            </div>
+            <div class="card-body">
+                <p>{{ msg.content }}</p>
+
+                {% if msg.replies.exists %}
+                    <hr>
+                    <h6>Conversation:</h6>
+                    {% for reply in msg.replies.all %}
+                        <div class="border-start ps-3 mb-2">
+                            <strong>{{ reply.sender.username }}:</strong>
+                            {{ reply.content }}<br>
+                            <small class="text-muted">{{ reply.sent_at|date:"Y-m-d H:i" }}</small>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                <div class="text-muted small">Waiting for admin response...</div>
+            </div>
+        </div>
+    {% endfor %}
+{% endif %}
+
+{% if not inbox_messages and not sent_messages %}
+    <p>You have no messages.</p>
+{% endif %}
+
+{% endblock %}

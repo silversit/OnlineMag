@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container text-white">
+    <h2 class="my-4">User Management</h2>
+    <table class="table table-dark table-bordered">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for u in users %}
+            <tr>
+                <td>{{ u.username }}</td>
+                <td>{{ u.email }}</td>
+                <td>{{ u.phone }}</td>
+                <td class="{% if not u.is_active %}text-danger{% else %}text-success{% endif %}">
+    {% if not u.is_active %}Blocked{% else %}Active{% endif %}
+</td>
+
+                <td>
+                    <form method="post" action="{% url 'owner-block-user' u.id %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-warning">
+                            {% if u.is_active %}Block{% else %}Unblock{% endif %}
+                        </button>
+                    </form>
+                    <form method="post" action="{% url 'owner-delete-user' u.id %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this user?');">
+                            Delete
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

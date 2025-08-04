@@ -1,0 +1,97 @@
+{% load static %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>OnlineMag</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+
+<body class="bg-dark text-white">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'homepage' %}">OnlineMag</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navContent">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navContent">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'product-list' %}">Products</a>
+                </li>
+
+                {% if user.is_authenticated %}
+          {% if user.role != 'owner' %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'basket-view' %}">Basket</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'inbox' %}">Messages</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'send-message' %}">Contact Admin</a>
+        </li>
+    {% endif %}
+                {# --- OWNER ONLY LINKS --- #}
+                {% if user.role == 'owner' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'owner-dashboard' %}">Owner Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'owner-product-list' %}">Manage Products</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'owner-order-list' %}">Orders</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'owner-user-list' %}">Users</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'owner-messages' %}">Owner Messages</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'owner-statistics' %}">Statistics</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'owner-transport-settings' %}">Transport Settings</a>
+                </li>
+                {% endif %}
+                {% endif %}
+            </ul>
+
+            <ul class="navbar-nav">
+                {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'profile' %}">{{ user.username }}'s Profile</a>
+                </li>
+                <li class="nav-item">
+                    <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-link nav-link" style="display:inline; padding:0;">Logout</button>
+                    </form>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'login' %}">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'register' %}">Register</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    {% block content %}
+    {% endblock %}
+</div>
+
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

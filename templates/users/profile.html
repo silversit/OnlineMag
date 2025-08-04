@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load form_extras %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Update Profile</h2>
+
+    <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+        {% csrf_token %}
+
+        {% if form.errors %}
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                        <li><strong>{{ field|title }}:</strong> {{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <div class="row">
+            <div class="col-md-4 text-center">
+                {% if user.picture %}
+                    <img src="{{ user.picture.url }}" class="img-thumbnail mb-3" style="max-width: 180px;" alt="Profile Picture">
+                {% else %}
+                    <img src="{% static 'images/default-avatar.png' %}" class="img-thumbnail mb-3" style="max-width: 180px;" alt="No Image">
+                {% endif %}
+                <div class="form-group">
+                    {{ form.picture.label_tag }}
+                    {{ form.picture|add_class:"form-control" }}
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <div class="form-group mb-3">
+                    {{ form.username.label_tag }}
+                    {{ form.username|add_class:"form-control" }}
+                </div>
+
+                <div class="form-group mb-3">
+                    {{ form.email.label_tag }}
+                    {{ form.email|add_class:"form-control" }}
+                </div>
+
+                <div class="form-group mb-3">
+                    {{ form.phone.label_tag }}
+                    {{ form.phone|add_class:"form-control" }}
+                </div>
+
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <a href="{% url 'password_change' %}" class="btn btn-warning ms-2">Change Password</a>
+                <a href="{% url 'homepage' %}" class="btn btn-secondary ms-2">Back to Home</a>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

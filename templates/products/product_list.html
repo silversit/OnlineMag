@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="container">
+    <h1 class="text-center my-4">All Products</h1>
+
+    <!-- SEARCH BAR -->
+    <form method="get" action="{% url 'product-list' %}" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="q" class="form-control" placeholder="Search products..." value="{{ query }}">
+            <button class="btn btn-outline-light" type="submit">Search</button>
+        </div>
+    </form>
+
+    {% if products %}
+    <div class="row">
+        {% for product in products %}
+        <div class="col-md-4 product-box mb-4">
+            <h4>{{ product.name }}</h4>
+            <img src="{{ product.image.url }}" class="img-fluid" alt="{{ product.name }}">
+            <p>{{ product.price }} USD</p>
+
+            <a href="{% url 'product-detail' product.pk %}" class="btn btn-outline-light w-100 mb-2">Details</a>
+
+            {% if user.is_authenticated %}
+            <form method="post" action="{% url 'add-to-basket' product.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-light w-100">Add to Basket</button>
+            </form>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center text-white fs-5 my-5" style="text-shadow: 0 0 5px white;">
+    No products found.
+</div>
+
+    {% endif %}
+
+    <!-- Pagination -->
+    {% if products.has_other_pages %}
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if products.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?q={{ query }}&page={{ products.previous_page_number }}">Previous</a>
+            </li>
+            {% endif %}
+            {% for num in products.paginator.page_range %}
+            <li class="page-item {% if num == products.number %}active{% endif %}">
+                <a class="page-link" href="?q={{ query }}&page={{ num }}">{{ num }}</a>
+            </li>
+            {% endfor %}
+            {% if products.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?q={{ query }}&page={{ products.next_page_number }}">Next</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+
+{% endblock %}

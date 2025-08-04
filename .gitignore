@@ -1,0 +1,10 @@
+.env
+db.sqlite3
+*.pyc
+/owner/migrations
+/messages_app/migrations
+/users/migrations
+/basket/migrations
+/core/migrations
+/products/migrations
+media/product_images/penny_stocks.png
